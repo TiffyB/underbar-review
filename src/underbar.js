@@ -197,6 +197,8 @@
   _.reduce = function(collection, iterator, accumulator) {
     // if no accumulator is given, first element is set as acc
     var isAccUndefined = (accumulator === undefined);
+    //set iterator to _.identity when no callback is provided
+    iterator = iterator || _.identity;
     // if not, perform reduce on all elements
     _.each(collection, function(item) {
       if (isAccUndefined) {
@@ -226,6 +228,19 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    var allTrueSoFar = true;
+    //set iterator to _.identity when no callback is provided
+    iterator = iterator || _.identity;
+    //use an anonymous function with reduce
+    _.reduce(collection, function(allTrueSoFar, item) {
+      allTrueSoFar = !!iterator(item);
+      if (!allTrueSoFar) {
+        return allTrueSoFar;
+      }
+      return allTrueSoFar;
+    }, allTrueSoFar);
+      //in this function, return the opposite's opposite of the value after calling the iterator
+      
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
