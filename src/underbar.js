@@ -7,6 +7,7 @@
   // seem very useful, but remember it--if a function needs to provide an
   // iterator when the user does not pass one in, this will be handy.
   _.identity = function(val) {
+    return val;
   };
 
   /**
@@ -37,6 +38,7 @@
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
+    return n === undefined ? array[array.length - 1] : n >= array.length ? array : array.slice(array.length - n);
   };
 
   // Call iterator(value, key, collection) for each element of collection.
@@ -45,6 +47,21 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
+    //determine if array
+    if(Array.isArray(collection)) {
+      //iterate over indices
+      for(var i = 0; i < collection.length; i++) {
+        //call iterator on element at each index
+        iterator(collection[i], i, collection);
+      }
+      //determine if object, but not array
+    } else  {
+      //iterate over object keys
+      for (var key in collection) {
+        //call iterator on each value
+        iterator(collection[key], key, collection);
+      }
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -66,16 +83,42 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    //create new array that contains elments that pass the test
+    var elements = [];
+    //iterate thru collection
+    _.each(collection, function(element) {
+      if (test(element) === true) {
+        elements.push(element);
+      }
+      
+    });
+    return elements;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    
+    //running filter with the collection
+    return _.filter(collection, function(element) {
+      return !test(element);
+    });
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    //if isSorted is equal to true
+      //create copy of array
+      //iterate thru values
+        //use iterator on each value
+    
+    
+    //convert array into a set (which will only retain unique elements within the set)
+    
+    
+    //convert back into an array;
+    
   };
 
 
