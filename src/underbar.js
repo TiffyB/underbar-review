@@ -108,17 +108,37 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    //create copy of array
+    var uniqueEl = [];
+    var copy = array.slice();
+    var iteratedCopy = [];
     //if isSorted is equal to true
-      //create copy of array
-      //iterate thru values
-        //use iterator on each value
-    
-    
-    //convert array into a set (which will only retain unique elements within the set)
-    
-    
-    //convert back into an array;
-    
+    iterator = iterator || _.identity;
+    _.each(copy, function(el) {
+      iteratedCopy.push(iterator(el));
+    });
+    var obj = {};
+    _.each(iteratedCopy, function(iteratedEl) {
+      obj[iteratedEl] = obj[iteratedEl] || iteratedEl;
+    });
+    for (var key in obj) {
+      uniqueEl.push(obj[key]);
+    }
+    if (isSorted) {
+      var indices = [];
+      var uniqSorted = [];
+      //determine the first index of each unique value
+      _.each(uniqueEl, function(el) {
+        indices.push(_.indexOf(iteratedCopy, el));
+      });
+      //pull the elements at those indices and push them to a new array
+      _.each(indices, function(index) {
+        uniqSorted.push(copy[index]);
+      });
+      //return this new array
+      return uniqSorted;
+    }
+    return uniqueEl;
   };
 
 
