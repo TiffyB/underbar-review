@@ -109,7 +109,7 @@
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
     //create copy of array
-    var uniqueEl = [];
+    var uniqueEls = [];
     var copy = array.slice();
     var iteratedCopy = [];
     //if isSorted is equal to true
@@ -122,13 +122,13 @@
       obj[iteratedEl] = obj[iteratedEl] || iteratedEl;
     });
     for (var key in obj) {
-      uniqueEl.push(obj[key]);
+      uniqueEls.push(obj[key]);
     }
     if (isSorted) {
       var indices = [];
       var uniqSorted = [];
       //determine the first index of each unique value
-      _.each(uniqueEl, function(el) {
+      _.each(uniqueEls, function(el) {
         indices.push(_.indexOf(iteratedCopy, el));
       });
       //pull the elements at those indices and push them to a new array
@@ -138,7 +138,7 @@
       //return this new array
       return uniqSorted;
     }
-    return uniqueEl;
+    return uniqueEls;
   };
 
 
@@ -147,6 +147,13 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    
+    // like each except an array will be returned
+    var output = [];
+    _.each(collection, function(element){
+      output.push(iterator(element));
+    });
+    return output;  
   };
 
   /*
@@ -188,6 +195,19 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    // if no accumulator is given, first element is set as acc
+    var isAccUndefined = (accumulator === undefined);
+    // if not, perform reduce on all elements
+    _.each(collection, function(item) {
+      if (isAccUndefined) {
+        accumulator = item;
+        isAccUndefined = false;
+      } else {
+        accumulator = iterator(accumulator, item);
+      }
+    });
+    // return accumulator
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
