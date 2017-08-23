@@ -232,21 +232,33 @@
     //set iterator to _.identity when no callback is provided
     iterator = iterator || _.identity;
     //use an anonymous function with reduce
-    _.reduce(collection, function(allTrueSoFar, item) {
-      allTrueSoFar = !!iterator(item);
-      if (!allTrueSoFar) {
-        return allTrueSoFar;
+    return _.reduce(collection, function(allTrueSoFar, item) {
+      //in this function, return the opposite's opposite of the value after calling the iterator
+      var isTrue = !!iterator(item);
+      if (!isTrue) {
+        //allTrueSoFar is only modified to false when the item that's run thru thru the iterator is a falsey value
+        allTrueSoFar = false;
       }
       return allTrueSoFar;
     }, allTrueSoFar);
-      //in this function, return the opposite's opposite of the value after calling the iterator
-      
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var allTrueSoFar = false;
+    //set iterator to _.identity when no callback is provided
+    iterator = iterator || _.identity;
+    //use an anonymous function with reduce
+    return _.reduce(collection, function(allTrueSoFar, item) {
+      //in this function, return the opposite's opposite of the value after calling the iterator
+      var isTrue = !!iterator(item);
+      if (isTrue) {
+        allTrueSoFar = true;
+      }
+      return allTrueSoFar;
+    }, allTrueSoFar);
   };
 
 
@@ -269,13 +281,33 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    // use arguments object here with obj1 being base/reference obj to extend
+    // iterate through array of objs
+      // iterate through properties of current obj
+        // assign to base obj at key of current obj the value of current obj at key
+    // return base obj (mutated obj)
+    var argArr = Array.prototype.slice.call(arguments);
+    _.each(argArr, function(argObj) {
+      _.each(argObj, function(value, key) {
+        obj[key] = value;
+      });
+    });
+    return obj;    
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var argArr = Array.prototype.slice.call(arguments);   
+    _.each(argArr, function(argObj) {
+      _.each(argObj, function(value, key) {
+        if (obj[key] === undefined) {
+          obj[key] = value;
+        }
+      });
+    });
+    return obj;    
   };
-
 
   /**
    * FUNCTIONS
@@ -316,7 +348,23 @@
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  _.memoize = function(func) {
+  _.memoize = function(func) { 
+    // create empty object to store already used arguments and returned values
+    var argObj = {};
+    
+    // TIP: We'll return a new function that delegates to the old one, but only
+    // if it hasn't been called before.
+    return function() {
+      // create a string representation of arguments passed into returned function
+      var args = JSON.stringify(arguments);
+      if (!argObj.hasOwnProperty(args)) { 
+        // TIP: .apply(this, arguments) is the standard way to pass on all of the
+        // infromation from one function call to another.
+        argObj[args] = func.apply(this, arguments);
+      }
+      // The new function always returns the originally computed result.
+      return argObj[args];
+    };       
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -326,6 +374,12 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    //similar to setTimeout
+    var args = Array.prototype.slice.call(arguments);
+    args = args.slice(2);
+    setTimeout(function() {
+      func.apply(this, args);
+    }, wait);
   };
 
 
